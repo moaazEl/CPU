@@ -1,45 +1,72 @@
-import subprocess
+#!/bin/bash
 
-def get_system_users():
-    try:
-        result = subprocess.run(['cut', '-d', ':', '-f', '1', '/etc/passwd'], capture_output=True, text=True, check=True)
-        return result.stdout.strip().split('\n')
-    except subprocess.CalledProcessError:
-        print("Error getting system users.")
-        return []
+ touch "existingusers.txt"
+sudo chmod 777 "existingusers.txt"
+touch "sortedexisting.txt"
+sudo chmod 777 sortedexisting.txt
+touch "sortedusers.txt"
+sudo chmod 777 sortedusers.txt
+touch "differences.txt"
+sudo chmod 777 differences.txt
+touch "removethese.txt"
+sudo chmod 777 removethese.txt
+touch "addthese.txt"
+sudo chmod 777 addthese.txt
 
-def add_user(username):
-    try:
-        subprocess.run(['sudo', 'useradd', '-m', username], check=True)
-        print(f"User '{username}' added successfully.")
-    except subprocess.CalledProcessError:
-        print(f"Error adding user '{username}'.")
+cut -d ':' -f 1 /etc/passwd > existingusers.txt
+sort existingusers.txt > sortedexisting.txt
+sort users.txt > sortedusers.txt
 
-def delete_user(username):
-    try:
-        subprocess.run(['sudo', 'userdel', '-r', username], check=True)
-        print(f"User '{username}' deleted successfully.")
-    except subprocess.CalledProcessError:
-        print(f"Error deleting user '{username}'.")
+diff "sortedusers.txt" "sortedexisting.txt" > "differences.txt"
 
-def main():
-    with open('users.txt', 'r') as file:
-        desired_users = set(file.read().splitlines())
+awk '/^< / {print $2}' differences.txt > removethese.txt
+awk '/^> / {print $2}' differences.txt > addthese.txt
 
-    system_users = get_system_users()
 
-    users_to_add = desired_users - set(system_users)
-    users_to_delete = set(system_users) - desired_users
+# Path to the text file containing usernames
+input_file="addthese.txt"
 
-    for user in users_to_add:
-        confirmation = input(f"Add user '{user}'? (yes/no): ")
-        if confirmation.lower() == 'yes':
-            add_user(user)
+# Check if the user list file exists
+if [ ! -f "$input_file" ]; then
+    echo "User list file $input_file not found."
+    exit 1
+fi
 
-    for user in users_to_delete:
-        confirmation = input(f"Delete user '{user}'? (yes/no): ")
-        if confirmation.lower() == 'yes':
-            delete_user(user)
+# Read usernames from the input file and add users
+while IFS= read -r username; do
+    # Create the user with the given username
+    useradd -m "$username"
+  
+    if [ $? -eq 0 ]; then
+        echo "User $username added successfully."
+    else
+        echo "Failed to add user $username."
+    fi
+done < "$input_file"
 
-if __name__ == "__main__":
-    main()
+echo "User addition process completed."
+
+
+
+# Path to the text file containing usernames
+input_file2="deletethese.txt"
+
+# Check if the user list file exists
+if [ ! -f "$input_file" ]; then
+    echo "User list file $input_file not found."
+    exit 1
+fi
+
+# Read usernames from the input file and add users
+while IFS= read -r username; do
+    # delete the user with the given username
+    userdell -m "$username"
+  
+    if [ $? -eq 0 ]; then
+        echo "User $username added successfully."
+    else
+        echo "Failed to add user $username."
+    fi
+done < "$input_file"
+
+echo "User addition process completed."
