@@ -1,0 +1,93 @@
+CyberTaipan List of Actions 
+  
+
+Forensic Questions  
+- finding UID of user, sudo cat /etc/passwd  
+- cd – navigate to a file  
+- if unable to open, cat ./filename  
+- if not showing, ls -a  
+- dcode.fr to decipher a message  
+- if all letters & comes up w a phillip cipher, most likely caeser cipher 
+
+-time related, use chrontab  
+-inode number, hard links pointing to file, owner of file, file creation date = stat filename  
+ 
+
+Upgrades  
+- run apt-get upgrade && apt-get update, install clamtk  
+- to install: apt-get install (package) or do manually from official website 
+ 
+
+User management 
+
+run bash files to add/delete users or manually, sudo userdel/useradd (username)  
+
+make groups: sudo groupadd (group name)  
+
+add users to group: sudo usermod -aG groupname username  
+
+remove users to group: sudo gpasswd –delete username groupname OR sudo deluser username groupname OR edit /etc/group file  
+
+view groups: cat /etc/group  
+ 
+
+Find, remove prohibited files  
+
+To find: find -name ‘*name*’  
+
+To remove: sudo rm filenames  
+
+Apt-cache pkgnames – in tab list of packages 
+
+Dpkg –list – all packages dpkg knows about with descript, status  
+
+Apt list – all packages apt knows about, repositories where available, installed, upgradable or not  
+
+apt list –installed – installed packages apt knows about  
+
+apt list –installed | grep name – find packages of interest  
+ 
+
+Password policies  
+- sudo chmod 777 /etc/pam.d if necessary, sudo nano /etc/pam.d/common-password  
+minlen=8 
+ucredit=- 3 
+decredit=-4  
+ ocredit=- 6 
+remember=4  
+ 
+sudo sed -i 's/yescrypt/sha512crypt/g' /etc/pam.d/common-password, only if needed  
+ 
+
+-sudo chmod 777 /etc/login.defs if necessary, sudo nano /etc/login.defs  
+PASS_MAX_DAYS 30 
+PASS_MIN_DAYS 15  
+PASS_WARN_AGE 3 
+- sudo chmod 777 /etc/lightdm/lightdm.conf.d if necessary, sudo nano /etc/lightdm/lightdm.conf.d/ 
+-disable null passwords = sudo nano /etc/pam.d/common-auth, remove ‘nullock’ from line  
+
+-change passwords = sudo passwd username  
+ 
+
+Security Updates, Kernal Hardening etc  
+- firewall = sudo ufw enable  
+- ctrl alt del = rebooting  
+- restrict dmesg to sudo = sudo sysctl -w kernel.dmesg_restrict=1 
+- auto-update through GUI  
+ 
+
+SSH  
+
+Sudo chmod 777 /etc/ssh/ssh_config if necessary, sudo nano /etc/ssh/ssh_config   
+ 
+
+MySQL  
+- nano /etc/mysql/my.cnf, find ‘bind-address,’ set to ‘bind-address =  127.0.0.1,’  
+
+‘sudo service mysql restart’ or ‘sudo systemctl restart mysql’  
+ 
+Links:  
+https://www.dcode.fr/cipher-identifier 
+https://www.digitalocean.com/community/tutorials/how-to-allow-remote-access-to-mysql 
+https://www.geeksforgeeks.org/grep-command-in-unixlinux/ 
+https://linuxhandbook.com/chmod-command/ 
