@@ -91,3 +91,6 @@ https://www.dcode.fr/cipher-identifier
 https://www.digitalocean.com/community/tutorials/how-to-allow-remote-access-to-mysql 
 https://www.geeksforgeeks.org/grep-command-in-unixlinux/ 
 https://linuxhandbook.com/chmod-command/ 
+
+#Code to add password in users that have a blank password
+# sudo echo -e "Yangwife15Awesome!"\nYangswife15Awesome!" | sudo passwd [username]
