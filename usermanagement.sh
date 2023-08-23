@@ -1,6 +1,8 @@
 #!/bin/bash 
 
 
+sort unsorted.txt > authorisedusers.txt
+
  
 # Function to add users from authorizedusers.txt 
 
